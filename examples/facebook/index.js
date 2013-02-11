@@ -1,10 +1,18 @@
-var passport = require('passport');
+var passport = require('passport-debug');
 var Hapi = require('hapi');
 var util = require('util');
 var FacebookStrategy = require('passport-facebook').Strategy
 
 var server = new Hapi.Server('localhost', 8000);
 
+
+/* Config.json in format of:
+
+{
+    "clientID": "xxxxxxxxxx",
+    "clientSecret": "xxxxxxxxxxx"
+}
+*/
 var config = require('./config.json');
 
 // Passport
