@@ -1,0 +1,27 @@
+{
+  "name": "hapi-passport",
+  "version": "0.0.1",
+  "description": "hapi passportjs integration helper",
+  "main": "index.js",
+  "dependencies": {
+    "hapi": ">= 0.13.x",
+    "passport": ">= 0.1.15"
+  },
+  "devDependencies": {
+    "passport-debug": ">= 0.1.16",
+    "passport-facebook": ">= 0.1.4"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/thegoleffect/hapi-passport.git"
+  },
+  "keywords": [
+    "hapi"
+  ],
+  "author": "Van Nguyen <thegoleffect@gmail.com>",
+  "license": "BSD",
+  "readmeFilename": "README.md"
+}
