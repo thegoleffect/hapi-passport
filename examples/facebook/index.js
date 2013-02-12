@@ -17,6 +17,8 @@ var config = require('./config.json');
 
 // Passport
 
+passport._plugin = require('../../lib/');
+
 passport.use(new FacebookStrategy({
     clientID: config.clientID,
     clientSecret: config.clientSecret,
