@@ -15,10 +15,23 @@ var cookieOptions = {
     }
 };
 server.plugin().require('hapi-jar', cookieOptions, function (err) {
+
     if (err) {
         throw err;
     }
 });
+
+var before = function (request, next) {
+
+    request.session = request.state[cookieOptions.plugin.name] || {};
+    next();
+};
+
+var after = function (request, next) {
+
+    request.plugins[cookieOptions.plugin.name] = request.session;
+    next();
+}
 
 server.addRoute({
     method: 'GET',
@@ -26,13 +39,18 @@ server.addRoute({
     config: {
         handler: function (request) {
 
-            request.plugins.jar = {
-                test: {
-                    nested: true,
-                    keys: 1
-                }
-            };
-            request.reply.redirect('/get').send();
+            before(request, function () {
+
+                // do stuff
+                request.session.user = {
+                    id: 'van'
+                };
+                
+                after(request, function () {
+
+                    request.reply.redirect('/get').send();
+                });
+            })
         }
     }
 });
@@ -43,7 +61,13 @@ server.addRoute({
     config: {
         handler: function (request) {
 
-            request.reply({'state': request.state})
+            before(request, function () {
+
+                after(request, function () {
+
+                    request.reply('<pre>session = ' + JSON.stringify(request.session, null, 2) + "</pre>");
+                })
+            })
         }
     }
 });
