@@ -14,10 +14,7 @@ var server = new Hapi.Server('localhost', 8000);
 }
 */
 var config = require('./config.json');
-
-// Passport
-
-passport._plugin = require('../../lib/');
+passport._plugin = require('../../lib/').plugin;
 
 passport.use(new FacebookStrategy({
     clientID: config.clientID,
