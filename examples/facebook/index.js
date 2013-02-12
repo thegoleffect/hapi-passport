@@ -204,8 +204,10 @@ server.addRoute({
     config: {
         handler: function (request) {
 
-            request.plugins.jar = null;
-            request.reply(request.state.jar);
+            // request.plugins.jar['test'] = null;
+            // request.plugins.jar['key'] = null;
+            delete request.state.jar;
+            request.reply(request.state);
         }
     }
 });
