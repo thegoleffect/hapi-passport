@@ -21,17 +21,33 @@ server.plugin().require('hapi-jar', cookieOptions, function (err) {
     }
 });
 
-var before = function (request, next) {
+var before = function () {
 
-    request.session = request.state[cookieOptions.plugin.name] || {};
-    next();
+    return function (request, next) {
+
+        console.log('before called');
+        request.session = request.state[cookieOptions.plugin.name] || {};
+        next();
+    };
 };
 
-var after = function (request, next) {
+var after = function () {
+    
+    return function (request, next) {
 
-    request.plugins[cookieOptions.plugin.name] = request.session;
-    next();
-}
+        console.log('after called');
+        request.plugins[cookieOptions.plugin.name] = request.session;
+        next();
+    };
+};
+
+server.ext('onPreHandler', [
+    before()
+]);
+
+server.ext('onPostHandler', false, [
+    after()
+]);
 
 server.addRoute({
     method: 'GET',
@@ -39,18 +55,12 @@ server.addRoute({
     config: {
         handler: function (request) {
 
-            before(request, function () {
-
-                // do stuff
-                request.session.user = {
-                    id: 'van'
-                };
-                
-                after(request, function () {
-
-                    request.reply.redirect('/get').send();
-                });
-            })
+            request.session.user = {
+                id: 'van'
+            };
+            
+            request.reply.redirect('/get').send();
+            console.log('send')
         }
     }
 });
@@ -61,13 +71,7 @@ server.addRoute({
     config: {
         handler: function (request) {
 
-            before(request, function () {
-
-                after(request, function () {
-
-                    request.reply('<pre>session = ' + JSON.stringify(request.session, null, 2) + "</pre>");
-                })
-            })
+            request.reply('<pre>session = ' + JSON.stringify(request.session, null, 2) + "</pre>");
         }
     }
 });
