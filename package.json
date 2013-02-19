@@ -24,6 +24,9 @@
     "hapi"
   ],
   "author": "Van Nguyen <thegoleffect@gmail.com>",
+  "contributors": [
+    "Jared Hanson <jaredhanson@gmail.com>"
+  ],
   "license": "BSD",
   "readmeFilename": "README.md"
 }
