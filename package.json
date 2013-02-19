@@ -10,7 +10,8 @@
   "devDependencies": {
     "hapi-jar": ">= 0.0.5",
     "passport-debug": ">= 0.1.15",
-    "passport-facebook": ">= 0.1.4"
+    "passport-facebook": ">= 0.1.4",
+    "chai": "~1.5.0"
   },
   "scripts": {
     "test": "make test"

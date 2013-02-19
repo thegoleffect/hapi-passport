@@ -2,25 +2,57 @@ var passport = require('passport-debug');
 var Hapi = require('hapi');
 var util = require('util');
 var FacebookStrategy = require('passport-facebook').Strategy
+var HapiPassport = require('../..');
 
 var server = new Hapi.Server('localhost', 8000);
 
 // enable session cookie jar
-var cookieOptions = {
-    permissions: {
-        ext: true
-    },
-    plugin: {
-        name: 'jar',
-        isSingleUse: false,
-        options: {
-            password: 'worldofwalmart'
+
+var hapiPassport = new HapiPassport(server, {
+    password: 'worldofwalmart'
+});
+
+server.addRoute({
+    method: 'GET',
+    path: '/get',
+    config: {
+        handler: function (request) {
+
+            console.log(request.state)
+            request.reply({'session': request.session});
         }
     }
-};
-server.plugin().require('hapi-jar', cookieOptions, function (err) {
-    if (err) {
-        throw err;
+});
+
+server.addRoute({
+    method: 'GET',
+    path: '/set',
+    config: {
+        handler: function (request) {
+
+            request.session.ts = new Date();
+            request.reply.redirect('/get').send();
+        }
+    }
+});
+
+server.addRoute({
+    method: 'GET',
+    path: '/clear',
+    config: {
+        handler: function (request) {
+
+            request.plugins.jar = request.state.jar;
+            
+            // var keys = Object.keys(request.state.jar)
+            // for(var i in keys){
+            //     console.log('deleting', keys[i], 'from', request.state.jar);
+            //     delete request.state.jar[keys[i]];
+            // }
+            delete request.state.jar['_'];
+            
+            request.reply.redirect('/get').send();
+        }
     }
 });
 
@@ -33,7 +65,7 @@ server.plugin().require('hapi-jar', cookieOptions, function (err) {
 }
 */
 var config = require('./config.json');
-passport._plugin = require('../../lib/').plugin;
+passport._plugin = hapiPassport.plugin;
 
 passport.use(new FacebookStrategy({
     clientID: config.clientID,
@@ -52,73 +84,10 @@ passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
 
-var getSession = function () {
-
-    return function (request, next) {
-
-        // console.log('getSession sees: ', request.state.jar)
-        if (request.state && request.state.jar && request.state.jar['passport']) {
-            // request.session = JSON.parse(request.state.jar['passport']);
-            // request.session = requs
-            console.log('getSession, jar', request.state.jar['passport'], typeof request.state.jar['passport'])
-            request.session = {};
-            try {
-                request.session = request.session || {};
-                request.session['passport'] = JSON.parse(request.state.jar['passport']);
-            }
-            catch (e) {
-                console.log("ERR: ", e)
-                request.session = {}
-            }
-        }
-        else {
-            request.session = {};
-        }
-        // console.log('getting session:', request.session)
-        console.log('getSession state', request.state.jar)
-        console.log('getSession plugin', request.plugins.jar)
-        
-        next();
-    };
-};
-
-var saveSession = function () {
-    
-    return function (request, next) {
-
-        // console.log('saveSession sees: ', request.session)
-        if (request.session) {
-            console.log("request.session found for user", request.session.passport.user.id)
-            // request.plugins.jar = request.session;
-            // delete request.session.passport.user._raw;
-            // delete request.session.passport.user._raw;
-            // request.plugins.jar['passport'] = JSON.stringify(request.session.passport.user);
-            // request.plugins.jar['passport'] = JSON.stringify({
-            //     id: request.session.passport.user.id
-            // });
-            request.plugins.jar['passport'] = JSON.stringify(request.session)
-        }
-        // console.log('saving jar:', request.plugins.jar)
-        console.log('saveSessions request.session', request.session);
-        console.log('saveSession state', request.state.jar)
-        console.log('saveSession plugin', request.plugins.jar)
-        console.log('adding to request.plugin')
-        // request.plugins.jar['key'] = 'testing'
-        
-        next();
-    };
-};
-
-
 server.ext('onPreHandler', [
-    getSession(),
     passport.initialize(),
     passport.session()
 ]);
-
-server.ext('onPostHandler', [
-    // saveSession()
-])
 
 var ensureAuthenticated = function (request, next) {
 
@@ -141,9 +110,11 @@ var authFBCB = {
 
             // console.log('request._passport', request._passport)
             // console.log(util.inspect(request), null, 2)
-            saveSession()(request, function(){
-                request.reply("authenticated with request.user = ", request.user);
-            });
+            // saveSession()(request, function(){
+            //     request.reply("authenticated with request.user = ", request.user);
+            // });
+            // console.log('request.session', request.session)
+            request.reply("<pre>authenticated with request.session = " + JSON.stringify(request.session, null, 2) + "</pre>");
         })
     }
 };
