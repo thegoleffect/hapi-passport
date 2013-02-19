@@ -1,3 +1,3 @@
-# Hapi Passport
+# Hapi-Passport / Diplomat 
 
 This project needs a new name...
