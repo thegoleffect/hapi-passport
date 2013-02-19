@@ -1,0 +1,3 @@
+# Hapi Passport
+
+This project needs a new name...
