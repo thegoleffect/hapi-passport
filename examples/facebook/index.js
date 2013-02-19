@@ -40,7 +40,8 @@ server.addRoute({
     method: 'GET',
     path: '/auth/facebook',
     config: {
-        handler: Diplomat.passport.authenticate('facebook')
+        // can use either passport.X or Diplomat.passport.X
+        handler: passport.authenticate('facebook')
     }
 });
 server.addRoute({
