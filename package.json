@@ -3,16 +3,17 @@
   "version": "0.0.1",
   "description": "hapi passportjs integration helper",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "hoek": "~0.4.5",
+    "boom": "~0.3.3"
+  },
   "devDependencies": {
     "hapi": ">= 0.13.x",
     "hapi-jar": ">= 0.0.5",
     "passport-debug": ">= 0.1.15",
     "passport-facebook": ">= 0.1.4",
     "chai": "~1.5.0",
-    "hoek": "~0.4.5",
-    "mocha": "~1.8.1",
-    "boom": "~0.3.3"
+    "mocha": "~1.8.1"
   },
   "scripts": {
     "test": "make test"
