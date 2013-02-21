@@ -1,6 +1,6 @@
 var Hapi = require('hapi');
 var Diplomat = require('../../');
-var Passport = require('passport');
+var Passport = require('passport-debug');
 
 
 var config = require('./config.json');
@@ -16,7 +16,7 @@ Passport.serializeUser(function(user, done) {
 
     done(null, user);
 });
-passport.deserializeUser(function(obj, done) {
+Passport.deserializeUser(function(obj, done) {
 
     done(null, obj);
 });
@@ -32,7 +32,7 @@ server.addRoute({
             // If logged in already, redirect to /home
             // else to /login
             request.reply.redirect('/home').send();
-        });
+        })
     }
 });
 
@@ -41,7 +41,7 @@ server.addRoute({
     path: '/auth/facebook',
     config: {
         // can use either passport.X or Diplomat.passport.X
-        handler: passport.authenticate('facebook')
+        handler: Passport.authenticate('facebook')
     }
 });
 server.addRoute({
@@ -51,7 +51,7 @@ server.addRoute({
         handler: Diplomat.passport.authenticate('facebook', function (request) {
 
             request.reply.redirect('/').send();
-        });
+        })
     }
 });
 
